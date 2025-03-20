@@ -166,7 +166,7 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 vim.keymap.set('n', '<leader>dd', vim.diagnostic.open_float, { desc = 'Display diagnostic message' })
-vim.keymap.set('n', '<leader>ddy', function()
+vim.keymap.set('n', '<leader>dy', function()
   local line = vim.api.nvim_win_get_cursor(0)[1] -- Get the current line number
   local diagnostics = vim.diagnostic.get(0, { lnum = line - 1 }) -- Get diagnostics for the current line
   if #diagnostics > 0 then
