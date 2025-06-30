@@ -102,7 +102,7 @@ vim.g.have_nerd_font = false
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
+vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -685,6 +685,7 @@ require('lazy').setup({
         gopls = {},
         basedpyright = {},
         rust_analyzer = {},
+        omnisharp = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -779,7 +780,7 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
+        python = { 'black' },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
@@ -1043,5 +1044,18 @@ require('lazy').setup({
   },
 })
 
+vim.keymap.set('i', '<C-y>', '<Plug>(copilot-accept-word)')
+vim.keymap.set('i', '<C-n>', '<Plug>(copilot-next)')
+vim.keymap.set('i', '<C-p>', '<Plug>(copilot-previous)')
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+vim.env.MSBUILD_EXE_PATH = '/Library/Frameworks/Mono.framework/Versions/Current/Commands/msbuild'
+
+-- Add treesitter code folding
+vim.opt.foldmethod = 'expr'
+vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+vim.opt.foldtext = 'v:lua.vim.fn.getline(v:foldstart)'
+vim.opt.foldlevel = 99 -- Open most folds by default
+vim.opt.foldlevelstart = 99 -- Open folds when buffer is opened
+vim.opt.foldenable = true -- Keep folding enabled
