@@ -12,8 +12,12 @@ return {
     opts = {
       workspaces = {
         {
-          name = 'Obsidian Vault',
-          path = '/Users/tino/Documents/Obsidian Vault',
+          name = 'vault',
+          path = '~/projects/vault',
+        },
+        {
+          name = 'masters-thesis',
+          path = '~/projects/masters_thesis',
         },
       },
       ui = { enable = false },
