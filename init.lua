@@ -1046,10 +1046,6 @@ require('lazy').setup({
 vim.opt.termguicolors = true
 vim.cmd 'colorscheme minimal'
 
--- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
-vim.env.MSBUILD_EXE_PATH = '/Library/Frameworks/Mono.framework/Versions/Current/Commands/msbuild'
-
 -- Add treesitter code folding
 vim.opt.foldmethod = 'expr'
 vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
