@@ -1,3 +1,96 @@
+local grip_state = {
+  job = nil,
+  port = 6419,
+  file = nil,
+}
+
+local function is_markdown_buffer()
+  local filename = vim.api.nvim_buf_get_name(0)
+  local filetype = vim.bo.filetype
+
+  return filetype == 'markdown' or filename:match '%.md$' ~= nil
+end
+
+local function open_browser(url)
+  local open_cmd
+
+  if vim.fn.has 'mac' == 1 then
+    open_cmd = { 'open', url }
+  elseif vim.fn.has 'unix' == 1 then
+    open_cmd = { 'xdg-open', url }
+  else
+    vim.notify('Unsupported OS for auto-opening browser', vim.log.levels.WARN)
+    return
+  end
+
+  vim.fn.jobstart(open_cmd, { detach = true })
+end
+
+local function stop_grip()
+  if grip_state.job then
+    vim.fn.jobstop(grip_state.job)
+    grip_state.job = nil
+    grip_state.file = nil
+    vim.notify 'Markdown preview stopped'
+  end
+end
+
+local function toggle_markdown_preview()
+  if not is_markdown_buffer() then
+    vim.notify('Markdown preview only works for Markdown files (*.md)', vim.log.levels.WARN)
+    return
+  end
+
+  if vim.fn.executable 'grip' ~= 1 then
+    vim.notify('grip is not installed or not in PATH', vim.log.levels.ERROR)
+    return
+  end
+
+  local file = vim.fn.expand '%:p'
+
+  if file == '' then
+    vim.notify('Current buffer has no file path', vim.log.levels.WARN)
+    return
+  end
+
+  if grip_state.job then
+    stop_grip()
+    return
+  end
+
+  grip_state.file = file
+  grip_state.job = vim.fn.jobstart({
+    'grip',
+    file,
+    tostring(grip_state.port),
+  }, {
+    detach = true,
+    on_exit = function()
+      grip_state.job = nil
+      grip_state.file = nil
+    end,
+  })
+
+  if grip_state.job <= 0 then
+    grip_state.job = nil
+    grip_state.file = nil
+    vim.notify('Failed to start grip', vim.log.levels.ERROR)
+    return
+  end
+
+  vim.defer_fn(function()
+    open_browser('http://localhost:' .. grip_state.port)
+  end, 500)
+
+  vim.notify('Markdown preview started: ' .. file)
+end
+
+vim.keymap.set('n', '<leader>mp', toggle_markdown_preview, {
+  desc = 'Toggle Markdown Preview (grip)',
+})
+
+local vault_path = vim.fn.expand '/Users/tino/Library/Mobile Documents/iCloud~md~obsidian/Documents/vault'
+
 vim.opt_local.conceallevel = 2
 vim.keymap.set('n', '<leader>on', ':ObsidianNew<CR>', { desc = 'Obsidian: new note' })
 vim.keymap.set('n', '<leader>oo', ':ObsidianQuickSwitch<CR>', { desc = 'Obsidian: open / switch note' })
@@ -8,7 +101,6 @@ vim.keymap.set('n', '<leader>or', ':ObsidianRename<CR>', { desc = 'Obsidian: ren
 vim.keymap.set('n', '<leader>ol', ':ObsidianLinkNew<CR>', { desc = 'Obsidian: link to new note' })
 vim.keymap.set('n', '<leader>op', ':ObsidianPasteImg<CR>', { desc = 'Obsidian: paste image' })
 vim.keymap.set('n', '<leader>od', function()
-  local vault_path = vim.fn.expand '~/nas/00_vault/'
   vim.cmd('e' .. vim.fn.fnameescape(vault_path))
 end, { desc = 'Obsidian: open vault in directory editor' })
 return {
@@ -25,10 +117,13 @@ return {
       workspaces = {
         {
           name = '00_vault',
-          path = '~/nas/00_vault/',
+          path = vault_path,
         },
       },
       ui = { enable = false },
+      templates = {
+        folder = '99_assets/templates',
+      },
       daily_notes = {
         -- Optional, if you keep daily notes in a separate directory.
         folder = '00_daily-notes',
@@ -39,7 +134,7 @@ return {
         -- Optional, default tags to add to each new daily note created.
         default_tags = { 'daily-notes' },
         -- Optional, if you want to automatically insert a template from your template directory like 'daily.md'
-        template = nil,
+        template = 'daily.md',
       },
       -- Optional, completion of wiki links, local markdown links, and tags using nvim-cmp.
       completion = {
@@ -136,14 +231,14 @@ return {
       },
     },
   },
-  {
-    'MeanderingProgrammer/render-markdown.nvim',
-    dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
-    ---@module 'render-markdown'
-    ---@type render.md.UserConfig
-    opts = {
-      bullet = { icons = { '*', '>', '>', '>' } },
-      latex = { enabled = false },
-    },
-  },
+  -- {
+  --   'MeanderingProgrammer/render-markdown.nvim',
+  --   dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
+  --   ---@module 'render-markdown'
+  --   ---@type render.md.UserConfig
+  --   opts = {
+  --     bullet = { icons = { '*', '>', '>', '>' } },
+  --     latex = { enabled = false },
+  --   },
+  -- },
 }
