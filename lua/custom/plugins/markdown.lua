@@ -1,3 +1,4 @@
+-- Markdown preview functionality with grip, grip needs to be installed separately
 local grip_state = {
   job = nil,
   port = 6419,
@@ -89,6 +90,7 @@ vim.keymap.set('n', '<leader>mp', toggle_markdown_preview, {
   desc = 'Toggle Markdown Preview (grip)',
 })
 
+-- obisidan.nvim keymaps
 local vault_path = vim.fn.expand '/Users/tino/Library/Mobile Documents/iCloud~md~obsidian/Documents/vault'
 
 vim.opt_local.conceallevel = 2
@@ -231,14 +233,20 @@ return {
       },
     },
   },
-  -- {
-  --   'MeanderingProgrammer/render-markdown.nvim',
-  --   dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
-  --   ---@module 'render-markdown'
-  --   ---@type render.md.UserConfig
-  --   opts = {
-  --     bullet = { icons = { '*', '>', '>', '>' } },
-  --     latex = { enabled = false },
-  --   },
-  -- },
+  -- render-markdown.nvim
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
+    ---@module 'render-markdown'
+    ---@type render.md.UserConfig
+    opts = {
+      bullet = { icons = { '*', '>', '>', '>' } },
+      latex = { enabled = false },
+      heading = {
+        enabled = true,
+        backgrounds = {},
+        icons = {},
+      },
+    },
+  },
 }

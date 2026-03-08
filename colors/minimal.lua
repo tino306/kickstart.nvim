@@ -28,6 +28,14 @@ vim.cmd 'highlight MoreMsg guifg=#808080'
 vim.cmd 'highlight Question guifg=#808080'
 vim.cmd 'highlight Title guifg=#ffffff'
 
+-- Markdown headings
+vim.api.nvim_set_hl(0, '@markup.heading.1.markdown', { fg = '#ff917e', bold = true })
+vim.api.nvim_set_hl(0, '@markup.heading.2.markdown', { fg = '#fefb7f', bold = true })
+vim.api.nvim_set_hl(0, '@markup.heading.3.markdown', { fg = '#ffffff' })
+vim.api.nvim_set_hl(0, '@markup.heading.4.markdown', { fg = '#808080' })
+vim.api.nvim_set_hl(0, '@markup.heading.5.markdown', { fg = '#808080', italic = true })
+vim.api.nvim_set_hl(0, '@markup.heading.6.markdown', { fg = '#808080', italic = true })
+
 -- Syntax highlighting
 vim.cmd 'highlight Comment guifg=#808080 gui=italic'
 vim.cmd 'highlight Constant guifg=#7df97d'
